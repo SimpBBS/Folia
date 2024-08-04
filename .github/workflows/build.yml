@@ -19,9 +19,6 @@ jobs:
       
       - name: Clone PaperMC/Folia Repository
         run: git clone https://github.com/PaperMC/Folia.git
-        
-      - name: Change Directory to Folia
-        run: cd Folia
       
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
@@ -36,13 +33,20 @@ jobs:
           java-version: '17'
       
       - name: Configure Git User Details
-        run: git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
+      
+        run: |
+          cd Folia
+          git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
       
       - name: Apply Patches
-        run: ./gradlew applyPatches  # Ensure this task exists
+        run: |
+          cd Folia
+          ./gradlew applyPatches  # Ensure this task exists
       
       - name: Build
-        run: ./gradlew build
+        run: |
+          cd Folia
+          ./gradlew build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4  # Using the latest version
