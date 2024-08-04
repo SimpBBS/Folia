@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Clone PaperMC/Folia Repository
-        run: git clone https://github.com/PaperMC/Folia.git
+        run: git clone --branch dev/1.21 https://github.com/PaperMC/Folia.git
       
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
