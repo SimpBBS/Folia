@@ -15,50 +15,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Git Repository
-        run: |
-          git clone https://github.com/PaperMC/Folia.git ./Folia
-          cd ./Folia
-
+        uses: actions/checkout@v3
+      - name: Clone PaperMC Folia Repository
+        run: git clone https://github.com/PaperMC/Folia.git .
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
-        working-directory: ./Folia
-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-        working-directory: ./Folia
-
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
-        working-directory: ./Folia
-
       - name: Configure Git User Details
         run: git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
-        working-directory: ./Folia
-
       - name: Apply Patches
-        run: ./gradlew applyPatches
-        working-directory: ./Folia
-
+        run: ./gradlew applyPatches  # Ensure this task exists
       - name: Build
         run: ./gradlew build
-        working-directory: ./Folia
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4  # Using the latest version
         with:
           name: Spigot Artifacts
-          path: ./Folia/target  # Ensure the path is correct
+          path: ./target  # Ensure path is correct
 
       - name: Auto release
         if: ${{ github.event_name != 'issues' }}
-        uses: marvinpinto/action-automatic-releases@v2  # Using the latest stable version
+        uses: marvinpinto/action-automatic-releases@latest  # Using the latest stable version
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: latest
           prerelease: false
           files: |
             *.jar
-        working-directory: ./Folia
