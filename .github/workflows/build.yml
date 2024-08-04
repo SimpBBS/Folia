@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v3
+      - name: Clear Directory
+        run: rm -rf ./* || true  # Clear existing files and directories
       - name: Clone PaperMC Folia Repository
         run: git clone https://github.com/PaperMC/Folia.git .
       - name: Validate Gradle wrapper
