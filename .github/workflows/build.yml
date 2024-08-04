@@ -10,52 +10,49 @@ on:
 
 jobs:
   build:
-    # Only run on PRs if the source branch is on someone else's repo
+    # Only run on PRs if the source branch is from a different repository
     if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Foila Repository
+      - name: Checkout Git Repository
         uses: actions/checkout@v3
-        with:
-          repository: 'PaperMC/Folia'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: 'Folia'
-
-      - name: Set working directory
-        run: echo "Folia" > $GITHUB_ENV
-
-      - name: Validate Gradle wrapper
-        run: ./Folia/gradlew wrapper-validation
-
+      
+      - name: Clone PaperMC/Folia Repository
+        run: git clone https://github.com/PaperMC/Folia.git
+        
+      - name: Change Directory to Folia
+        run: cd Folia
+      
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+      
       - name: Setup Gradle
-        run: ./Folia/gradlew setup
-
+        uses: gradle/gradle-build-action@v2
+      
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
-
+      
       - name: Configure Git User Details
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "Github Actions"
-
+        run: git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
+      
       - name: Apply Patches
-        run: ./Folia/gradlew applyPatches
-
+        run: ./gradlew applyPatches  # Ensure this task exists
+      
       - name: Build
-        run: ./Folia/gradlew build
+        run: ./gradlew build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4  # Using the latest version
         with:
           name: Spigot Artifacts
-          path: ./Folia/target
+          path: ./target  # Ensure this path is correct
 
-      - name: Auto release
+      - name: Auto Release
         if: ${{ github.event_name != 'issues' }}
-        uses: marvinpinto/action-automatic-releases@latest  # Using the latest version
+        uses: marvinpinto/action-automatic-releases@v2  # Using the latest stable version
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: latest
