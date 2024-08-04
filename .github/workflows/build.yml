@@ -21,16 +21,16 @@ jobs:
         run: git clone --branch dev/1.21 https://github.com/PaperMC/Folia.git
       
       - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/wrapper-validation-action@v3
       
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: 'zulu'
+          java-version: '21'
       
       - name: Configure Git User Details
       
